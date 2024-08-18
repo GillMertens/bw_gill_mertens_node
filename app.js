@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const { Pool } = require('pg');
 const postRoutes = require('./routes/posts');
 const commentRoutes = require('./routes/comments');
+const userRoutes = require('./routes/users');
 
 const app = express();
 
@@ -22,5 +23,6 @@ app.use(bodyParser.json());
 
 app.use('/posts', postRoutes);
 app.use('/comments', commentRoutes);
+app.use('/users', userRoutes);
 
 app.listen(3000, () => console.log('Server started on port 3000'));
