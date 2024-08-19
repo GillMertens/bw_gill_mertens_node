@@ -22,7 +22,17 @@ router.get('/',
     async (req, res) => {
   try {
     const comments = await Comment.getAll();
-    res.json(comments.rows);
+    res.json(comments);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.get('/post/:postId', authenticate, async (req, res) => {
+  const { postId } = req.params;
+  try {
+    const comments = await Comment.getByPostId(postId);
+    res.json(comments);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -34,10 +44,10 @@ router.get('/:id',
   const { id } = req.params;
   try {
     const comment = await Comment.getById(id);
-    if (comment.rows.length === 0) {
+    if (!comment) {
       return res.status(404).json({ message: 'Comment not found' });
     }
-    res.json(comment.rows[0]);
+    res.json(comment);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

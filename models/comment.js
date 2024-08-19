@@ -18,6 +18,12 @@ class Comment {
     return result.rows[0];
   }
 
+  static async getByPostId(postId) {
+  const queryText = 'SELECT * FROM comments WHERE post_id = $1';
+  const result = await db.query(queryText, [postId]);
+  return result.rows;
+}
+
   static update(id, content) {
     const queryText = 'UPDATE comments SET content = $1 WHERE id = $2 RETURNING *';
     return db.query(queryText, [content, id]);

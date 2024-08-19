@@ -2,8 +2,13 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
+const authenticate = require('../middleware/authenticate');
+const authorize = require('../middleware/authorize');
+const isAdmin = require('../middleware/isAdmin')
 
-router.post('/', async (req, res) => {
+router.post('/',
+    isAdmin,
+    async (req, res) => {
   const { username, password, first_name, last_name, email, role } = req.body;
   try {
     const newUser = await User.create(username, password, first_name, last_name, email, role);
@@ -13,7 +18,9 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.get('/', async (req, res) => {
+router.get('/',
+    authenticate,
+    async (req, res) => {
   try {
     const users = await User.getAll();
     res.json(users.rows);
@@ -22,7 +29,9 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id',
+    authenticate,
+    async (req, res) => {
   const { id } = req.params;
   try {
     const user = await User.getById(id);
@@ -35,7 +44,9 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.patch('/:id', async (req, res) => {
+router.patch('/:id',
+    authorize(User.getById),
+    async (req, res) => {
   const { id } = req.params;
   const { username, first_name, last_name, email } = req.body;
   try {
@@ -49,7 +60,9 @@ router.patch('/:id', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id',
+    authorize(User.getById),
+    async (req, res) => {
   const { id } = req.params;
   try {
     const deletedUser = await User.delete(id);
