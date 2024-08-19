@@ -58,6 +58,7 @@ router.get('/:id',
 });
 
 router.patch('/:id',
+    authenticate,
     authorize(User.getById),
     [
       body('username').optional().trim().isLength({ min: 5 }).withMessage('Username must be at least 5 characters long'),
@@ -84,6 +85,7 @@ router.patch('/:id',
     });
 
 router.delete('/:id',
+    authenticate,
     authorize(User.getById),
     async (req, res) => {
   const { id } = req.params;
@@ -97,7 +99,6 @@ router.delete('/:id',
     res.status(500).json({ message: err.message });
   }
 });
-
 router.post('/register',
     [
       body('username').trim().isLength({ min: 5 }).withMessage('Username must be at least 5 characters long'),
@@ -139,7 +140,7 @@ router.post('/login',
     if (!isValidPassword) {
       return res.status(401).json({ message: 'Invalid username or password' });
     }
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.json({ token });
   } catch (err) {
     res.status(500).json({ message: err.message });

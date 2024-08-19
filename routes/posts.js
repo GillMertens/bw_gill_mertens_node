@@ -16,7 +16,8 @@ router.post('/',
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-        const { user_id, title, content } = req.body;
+        const { title, content } = req.body;
+        const user_id = req.user.id;
         try {
             const newPost = await Post.create(user_id, title, content);
             res.json(newPost.rows[0]);
@@ -36,7 +37,9 @@ router.get('/',
   }
 });
 
-router.get('/search', async (req, res) => {
+router.get('/search',
+    authenticate,
+    async (req, res) => {
     const { title } = req.query;
     try {
         const posts = await Post.searchByTitle(title);
@@ -46,7 +49,10 @@ router.get('/search', async (req, res) => {
     }
 });
 
-router.get('/limit', async (req, res) => {
+router.get('/limit',
+    authenticate,
+    async (req, res) => {
+
     const limit = Number(req.body.limit);
     const offset = Number(req.body.offset);
     try {
@@ -73,6 +79,7 @@ router.get('/:id',
 });
 
 router.patch('/:id',
+    authenticate,
     authorize(Post.getById),
     [
         body('title').optional().trim().isLength({ min: 5 }).withMessage('Title must be at least 5 characters long'),

@@ -15,7 +15,8 @@ router.post('/',
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
-      const { user_id, post_id, content } = req.body;
+      const { post_id, content } = req.body;
+      const user_id = req.user.id;
       try {
         const newComment = await Comment.create(user_id, post_id, content);
         res.json(newComment.rows[0]);
@@ -61,6 +62,7 @@ router.get('/:id',
 });
 
 router.patch('/:id',
+    authenticate,
     authorize(Comment.getById),
     [
       body('content').optional().trim().isLength({ min: 5 }).withMessage('Content must be at least 5 characters long'),
