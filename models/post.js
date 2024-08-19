@@ -9,13 +9,19 @@ class Post {
   static async getAll() {
     const queryText = 'SELECT * FROM posts';
     const result = await db.query(queryText);
-    return result.rows; // return all posts
+    return result.rows;
+  }
+
+  static async getAllLimitOffset(limit, offset) {
+    const queryText = 'SELECT * FROM posts ORDER BY id LIMIT $1 OFFSET $2';
+    const result = await db.query(queryText, [limit, offset]);
+    return result.rows;
   }
 
   static async getById(id) {
     const queryText = 'SELECT * FROM posts WHERE id = $1';
     const result = await db.query(queryText, [id]);
-    return result.rows[0]; // return the post data
+    return result.rows[0];
   }
 
   static update(id, title, content) {

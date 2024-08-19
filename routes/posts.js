@@ -22,10 +22,21 @@ router.get('/',
     async (req, res) => {
   try {
     const posts = await Post.getAll();
-    res.json(posts.rows);
+    res.json(posts);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+});
+
+router.get('/limit', async (req, res) => {
+    const limit = Number(req.body.limit);
+    const offset = Number(req.body.offset);
+    try {
+        const posts = await Post.getAllLimitOffset(limit, offset);
+        res.json(posts);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 });
 
 router.get('/:id',
