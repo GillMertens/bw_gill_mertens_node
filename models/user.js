@@ -3,13 +3,12 @@ const bcrypt = require('bcrypt');
 
 class User {
   static async create(username, password, first_name, last_name, email, role = 'user') {
+    if (!this.isValidEmail(email)) {
+      throw new Error('Invalid email format');
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
     const queryText = 'INSERT INTO users(username, password, first_name, last_name, email, role) VALUES($1, $2, $3, $4, $5, $6) RETURNING *';
     return db.query(queryText, [username, hashedPassword, first_name, last_name, email, role]);
-  }
-
-  static async validatePassword(password, hashedPassword) {
-    return bcrypt.compare(password, hashedPassword);
   }
 
   static async getAll() {
@@ -30,14 +29,26 @@ class User {
     return result.rows[0];
   }
 
-  static update(id, username, password, first_name, last_name, email, role) {
-    const queryText = 'UPDATE users SET username = $1, password = $2, first_name = $3, last_name = $4, email = $5, role = $6 WHERE id = $7 RETURNING *';
-    return db.query(queryText, [username, password, first_name, last_name, email, role, id]);
+  static update(id, username, first_name, last_name, email) {
+    if (!this.isValidEmail(email)) {
+      throw new Error('Invalid email format');
+    }
+    const queryText = 'UPDATE users SET username = $1, first_name = $2, last_name = $3, email = $4 WHERE id = $5 RETURNING *';
+    return db.query(queryText, [username, first_name, last_name, email, id]);
   }
 
   static delete(id) {
     const queryText = 'DELETE FROM users WHERE id = $1 RETURNING *';
     return db.query(queryText, [id]);
+  }
+
+  static async validatePassword(password, hashedPassword) {
+    return bcrypt.compare(password, hashedPassword);
+  }
+
+  static isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   }
 }
 

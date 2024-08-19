@@ -37,13 +37,13 @@ router.get('/:id', async (req, res) => {
 
 router.patch('/:id', async (req, res) => {
   const { id } = req.params;
-  const { username, password, first_name, last_name, email, role } = req.body;
+  const { username, first_name, last_name, email } = req.body;
   try {
-    const updatedUser = await User.update(id, username, password, first_name, last_name, email, role);
+    const updatedUser = await User.update(id, username, first_name, last_name, email);
     if (updatedUser.rowCount === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.json(updatedUser.rows[0]);
+    res.json();
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
