@@ -3,19 +3,26 @@ const router = express.Router();
 const Comment = require('../models/comment');
 const authenticate = require('../middleware/authenticate');
 const authorize = require('../middleware/authorize');
+const { body, validationResult } = require('express-validator');
 
 router.post('/',
     authenticate,
+    [
+      body('content').trim().isLength({ min: 5 }).withMessage('Content must be at least 5 characters long'),
+    ],
     async (req, res) => {
-  const { postId, content } = req.body;
-  const user_id = req.user.id;
-  try {
-    const comment = await Comment.create(user_id, postId, content);
-    res.json(comment.rows[0]);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+      const { user_id, post_id, content } = req.body;
+      try {
+        const newComment = await Comment.create(user_id, post_id, content);
+        res.json(newComment.rows[0]);
+      } catch (err) {
+        res.status(500).json({ message: err.message });
+      }
+    });
 
 router.get('/',
     authenticate,
@@ -54,21 +61,27 @@ router.get('/:id',
 });
 
 router.patch('/:id',
-    authenticate,
     authorize(Comment.getById),
+    [
+      body('content').optional().trim().isLength({ min: 5 }).withMessage('Content must be at least 5 characters long'),
+    ],
     async (req, res) => {
-  const { id } = req.params;
-  const { content } = req.body;
-  try {
-    const updatedComment = await Comment.update(id, content);
-    if (updatedComment.rowCount === 0) {
-      return res.status(404).json({ message: 'Comment not found' });
-    }
-    res.json(updatedComment.rows[0]);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+      const { id } = req.params;
+      const { content } = req.body;
+      try {
+        const updatedComment = await Comment.update(id, content);
+        if (updatedComment.rowCount === 0) {
+          return res.status(404).json({ message: 'Comment not found' });
+        }
+        res.json();
+      } catch (err) {
+        res.status(500).json({ message: err.message });
+      }
+    });
 
 router.delete('/:id',
     authenticate,
