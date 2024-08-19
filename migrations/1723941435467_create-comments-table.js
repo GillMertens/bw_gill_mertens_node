@@ -11,10 +11,17 @@ exports.shorthands = undefined;
 exports.up = (pgm) => {
     pgm.createTable('comments', {
         id: 'id',
-        post_id: { type: 'integer', notNull: true, references: 'posts' },
+        post_id: {
+            type: 'integer',
+            notNull: true,
+            references: 'posts',
+            onDelete: 'CASCADE'
+        },
         content: { type: 'text', notNull: true },
+        created_at: { type: 'timestamp', notNull: true, default: pgm.func('current_timestamp') },
+        updated_at: { type: 'timestamp', notNull: true, default: pgm.func('current_timestamp') },
     });
-}
+};
 
 /**
  * @param pgm {import('node-pg-migrate').MigrationBuilder}

@@ -1,19 +1,21 @@
 const db = require('../config/db');
 
 class Comment {
-  static create(postId, content) {
-    const queryText = 'INSERT INTO comments(post_id, content) VALUES($1, $2) RETURNING *';
-    return db.query(queryText, [postId, content]);
+  static create(user_id, postId, content) {
+    const queryText = 'INSERT INTO comments(user_id, post_id, content) VALUES($1, $2, $3) RETURNING *';
+    return db.query(queryText, [user_id, postId, content]);
   }
 
-  static getAll() {
+  static async getAll() {
     const queryText = 'SELECT * FROM comments';
-    return db.query(queryText);
+    const result = await db.query(queryText);
+    return result.rows;
   }
 
-  static getById(id) {
+  static async getById(id) {
     const queryText = 'SELECT * FROM comments WHERE id = $1';
-    return db.query(queryText, [id]);
+    const result = await db.query(queryText, [id]);
+    return result.rows[0];
   }
 
   static update(id, content) {

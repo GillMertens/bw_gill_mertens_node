@@ -1,19 +1,21 @@
-// posts.js
 const express = require('express');
 const router = express.Router();
 const Post = require('../models/post');
+const authenticate = require('../middleware/authenticate');
+const authorize = require('../middleware/authorize');
 
-router.post('/', async (req, res) => {
-  const { title, content } = req.body;
-  try {
-    const newPost = await Post.create(title, content);
-    res.json(newPost.rows[0]);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+router.post('/', authenticate, async (req, res) => {
+    const { title, content } = req.body;
+    const user_id = req.user.id;
+    try {
+        const newPost = await Post.create(user_id, title, content);
+        res.json(newPost.rows[0]);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 });
 
-router.get('/', async (req, res) => {
+router.get('/', authenticate, async (req, res) => {
   try {
     const posts = await Post.getAll();
     res.json(posts.rows);
@@ -22,7 +24,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticate, async (req, res) => {
   const { id } = req.params;
   try {
     const post = await Post.getById(id);
@@ -35,7 +37,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', authenticate, authorize(Post.getById), async (req, res) => {
     const { id } = req.params;
     const { title, content } = req.body;
     try {
@@ -49,7 +51,7 @@ router.patch('/:id', async (req, res) => {
     }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticate, authorize(Post.getById), async (req, res) => {
   const { id } = req.params;
   try {
     const deletedPost = await Post.delete(id);

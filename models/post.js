@@ -1,20 +1,21 @@
-// models/post.js
 const db = require('../config/db');
 
 class Post {
-  static create(title, content) {
-    const queryText = 'INSERT INTO posts(title, content) VALUES($1, $2) RETURNING *';
-    return db.query(queryText, [title, content]);
+  static create(user_id, title, content) {
+    const queryText = 'INSERT INTO posts(user_id, title, content) VALUES($1, $2, $3) RETURNING *';
+    return db.query(queryText, [user_id, title, content]);
   }
 
-  static getAll() {
+  static async getAll() {
     const queryText = 'SELECT * FROM posts';
-    return db.query(queryText);
+    const result = await db.query(queryText);
+    return result.rows; // return all posts
   }
 
-  static getById(id) {
+  static async getById(id) {
     const queryText = 'SELECT * FROM posts WHERE id = $1';
-    return db.query(queryText, [id]);
+    const result = await db.query(queryText, [id]);
+    return result.rows[0]; // return the post data
   }
 
   static update(id, title, content) {

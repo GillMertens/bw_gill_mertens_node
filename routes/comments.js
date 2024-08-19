@@ -1,12 +1,14 @@
-// comments.js
 const express = require('express');
 const router = express.Router();
 const Comment = require('../models/comment');
+const authenticate = require('../middleware/authenticate');
+const authorize = require('../middleware/authorize');
 
-router.post('/', async (req, res) => {
+router.post('/', authenticate, async (req, res) => {
   const { postId, content } = req.body;
+  const user_id = req.user.id;
   try {
-    const comment = await Comment.create(postId, content);
+    const comment = await Comment.create(user_id, postId, content);
     res.json(comment.rows[0]);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -35,7 +37,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', authorize(Comment.getById), async (req, res) => {
   const { id } = req.params;
   const { content } = req.body;
   try {
@@ -49,7 +51,7 @@ router.patch('/:id', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authorize(Comment.getById), async (req, res) => {
   const { id } = req.params;
   try {
     const deletedComment = await Comment.delete(id);
