@@ -24,6 +24,12 @@ class Post {
     return result.rows[0];
   }
 
+  static async searchByTitle(title) {
+    const queryText = 'SELECT * FROM posts WHERE title ILIKE $1';
+    const result = await db.query(queryText, [`%${title}%`]);
+    return result.rows;
+  }
+
   static update(id, title, content) {
     const queryText = 'UPDATE posts SET title = $1, content = $2 WHERE id = $3 RETURNING *';
     return db.query(queryText, [title, content, id]);
