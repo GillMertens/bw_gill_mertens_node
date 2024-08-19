@@ -6,6 +6,9 @@ class User {
     if (!this.isValidEmail(email)) {
       throw new Error('Invalid email format');
     }
+    if (!this.isValidName(first_name) || !this.isValidName(last_name)) {
+        throw new Error('Invalid name format');
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
     const queryText = 'INSERT INTO users(username, password, first_name, last_name, email, role) VALUES($1, $2, $3, $4, $5, $6) RETURNING *';
     return db.query(queryText, [username, hashedPassword, first_name, last_name, email, role]);
@@ -33,6 +36,9 @@ class User {
     if (!this.isValidEmail(email)) {
       throw new Error('Invalid email format');
     }
+    if (!this.isValidName(first_name) || !this.isValidName(last_name)) {
+      throw new Error('Invalid name format');
+    }
     const queryText = 'UPDATE users SET username = $1, first_name = $2, last_name = $3, email = $4 WHERE id = $5 RETURNING *';
     return db.query(queryText, [username, first_name, last_name, email, id]);
   }
@@ -49,6 +55,10 @@ class User {
   static isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
+  }
+
+  static isValidName(name) {
+    return !/\d/.test(name);
   }
 }
 
