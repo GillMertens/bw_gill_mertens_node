@@ -2,6 +2,10 @@
 
 This project is a Node.js API that uses PostgreSQL as its database. It is designed to be run in a Docker environment.
 
+# Github Link
+
+https://github.com/GillMertens/bw_gill_mertens_node
+
 ## Prerequisites
 
 - Docker or postgresql database
@@ -57,9 +61,11 @@ https://nodejs.org/docs/latest-v21.x/api/index.html
 
 https://saturncloud.io/blog/how-can-i-validate-an-email-address-using-a-regular-expression/
 
+https://expressjs.com/en/guide/writing-middleware.html
 
+https://github.com/auth0/node-jsonwebtoken#readme
 
-
+https://express-validator.github.io/docs
 
 ## Running the API
 After completing the setup, you can start the API with the following command:
