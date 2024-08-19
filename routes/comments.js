@@ -18,7 +18,7 @@ router.post('/',
 });
 
 router.get('/',
-    authenticate(),
+    authenticate,
     async (req, res) => {
   try {
     const comments = await Comment.getAll();
@@ -29,7 +29,7 @@ router.get('/',
 });
 
 router.get('/:id',
-    authenticate(),
+    authenticate,
     async (req, res) => {
   const { id } = req.params;
   try {
@@ -44,7 +44,7 @@ router.get('/:id',
 });
 
 router.patch('/:id',
-    authenticate(),
+    authenticate,
     authorize(Comment.getById),
     async (req, res) => {
   const { id } = req.params;
@@ -61,7 +61,7 @@ router.patch('/:id',
 });
 
 router.delete('/:id',
-    authenticate(),
+    authenticate,
     authorize(Comment.getById),
     async (req, res) => {
   const { id } = req.params;
