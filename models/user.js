@@ -20,11 +20,11 @@ class User {
     return result.rows;
   }
 
-  static async getById(id) {
-    const queryText = 'SELECT * FROM posts WHERE id = $1';
-    const result = await db.query(queryText, [id]);
-    return result.rows[0];
-  }
+static async getById(id) {
+  const queryText = 'SELECT * FROM users WHERE id = $1';
+  const result = await db.query(queryText, [id]);
+  return result.rows[0];
+}
 
   static async getByUsername(username) {
     const queryText = 'SELECT * FROM users WHERE username = $1';
