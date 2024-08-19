@@ -4,7 +4,9 @@ const Post = require('../models/post');
 const authenticate = require('../middleware/authenticate');
 const authorize = require('../middleware/authorize');
 
-router.post('/', authenticate, async (req, res) => {
+router.post('/',
+    authenticate,
+    async (req, res) => {
     const { title, content } = req.body;
     const user_id = req.user.id;
     try {
@@ -15,7 +17,9 @@ router.post('/', authenticate, async (req, res) => {
     }
 });
 
-router.get('/', authenticate, async (req, res) => {
+router.get('/',
+    authenticate,
+    async (req, res) => {
   try {
     const posts = await Post.getAll();
     res.json(posts.rows);
@@ -24,7 +28,9 @@ router.get('/', authenticate, async (req, res) => {
   }
 });
 
-router.get('/:id', authenticate, async (req, res) => {
+router.get('/:id',
+    authenticate,
+    async (req, res) => {
   const { id } = req.params;
   try {
     const post = await Post.getById(id);
@@ -37,7 +43,10 @@ router.get('/:id', authenticate, async (req, res) => {
   }
 });
 
-router.patch('/:id', authenticate, authorize(Post.getById), async (req, res) => {
+router.patch('/:id',
+    authenticate,
+    authorize(Post.getById),
+    async (req, res) => {
     const { id } = req.params;
     const { title, content } = req.body;
     try {
@@ -51,7 +60,10 @@ router.patch('/:id', authenticate, authorize(Post.getById), async (req, res) => 
     }
 });
 
-router.delete('/:id', authenticate, authorize(Post.getById), async (req, res) => {
+router.delete('/:id',
+    authenticate,
+    authorize(Post.getById),
+    async (req, res) => {
   const { id } = req.params;
   try {
     const deletedPost = await Post.delete(id);

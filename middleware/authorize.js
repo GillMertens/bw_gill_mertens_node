@@ -5,9 +5,9 @@ module.exports = (getModelById) => {
     if (!model) {
       return res.status(404).json({ message: 'Not found' });
     }
-    if (model.user_id !== req.user.id) {
-      return res.status(403).json({ message: 'Forbidden' });
+    if (req.user.role === 'admin' || model.user_id === req.user.id) {
+      return next();
     }
-    next();
+    return res.status(403).json({ message: 'Forbidden' });
   };
 };
