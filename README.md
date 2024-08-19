@@ -52,8 +52,16 @@ This project is a Node.js API that uses PostgreSQL as its database. It is design
     DATABASE_URL=postgres://postgres:password@localhost:5432/postgres npm run migrate up
     ```
 
-## Running the API
+## Sources
+https://nodejs.org/docs/latest-v21.x/api/index.html
 
+https://saturncloud.io/blog/how-can-i-validate-an-email-address-using-a-regular-expression/
+
+
+
+
+
+## Running the API
 After completing the setup, you can start the API with the following command:
 
 ```
